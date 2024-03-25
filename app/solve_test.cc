@@ -1,6 +1,13 @@
+#include "problem.h"
 #include <iostream>
 
-int main()
-{
-    return 0;
+int main() {
+  optimisation::ExampleProblem ex_prob(3);
+
+  std::cout << "f:\n" << ex_prob.func() << std::endl;
+  std::cout << "F:\n" << ex_prob.CostFunc() << std::endl;
+  std::cout << "Jacobian:\n" << ex_prob.Jacobian_of_f() << std::endl;
+  ex_prob.UpdateVariable({1.0});
+
+  return 0;
 }

@@ -3,7 +3,8 @@ solve_test.cc)
 
 target_link_libraries(solve_test
 PRIVATE
-    Boost::boost)
+    Boost::boost
+    optimisation_problme)
 
 install(
     TARGETS
