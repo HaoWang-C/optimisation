@@ -76,6 +76,8 @@ public:
 
   bool UpdateVariable(const std::vector<double> &delta_x) override;
 
+  double x() const { return x_; }
+
 private:
   double x_;
 };

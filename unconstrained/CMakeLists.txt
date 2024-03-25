@@ -13,6 +13,7 @@ PRIVATE
 target_link_libraries(unconstrained_optimisation
 PUBLIC
     Boost::boost
+    optimisation_problme
 )
 
 target_include_directories(unconstrained_optimisation

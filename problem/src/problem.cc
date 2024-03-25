@@ -4,7 +4,7 @@ namespace optimisation {
 
 Eigen::Matrix<double, 2, 1> ExampleProblem::func() const {
   Eigen::Matrix<double, 2, 1> f;
-  f << (x_ + 1), (x_ * x_ + x_ - 1);
+  f << (x_ + 1), (2 * x_ * x_ + x_ - 1);
   return f;
 }
 
@@ -15,7 +15,7 @@ double ExampleProblem::CostFunc() const {
 
 Eigen::Matrix<double, 2, 1> ExampleProblem::Jacobian_of_f() const {
   Eigen::Matrix<double, 2, 1> Jacobian;
-  Jacobian << 1, (2 * x_ + 1);
+  Jacobian << 1, (2 * 2 * x_ + 1);
   return Jacobian;
 }
 
