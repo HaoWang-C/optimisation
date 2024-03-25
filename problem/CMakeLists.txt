@@ -1,21 +1,21 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(unconstrained_optimisation)
+project(optimisation_problme)
 
 include_directories(include)
 
-add_library(unconstrained_optimisation)
+add_library(optimisation_problme)
 
-target_sources(unconstrained_optimisation
+target_sources(optimisation_problme
 PRIVATE
-    src/gauss_newton.cc
+    src/problem.cc
 )
 
-target_link_libraries(unconstrained_optimisation
+target_link_libraries(optimisation_problme
 PUBLIC
     Boost::boost
 )
 
-target_include_directories(unconstrained_optimisation
+target_include_directories(optimisation_problme
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 PUBLIC
@@ -25,7 +25,7 @@ PUBLIC
 
 install(
     TARGETS
-    unconstrained_optimisation
+    optimisation_problme
 )
 
 install(DIRECTORY include/ DESTINATION "$(CMAKE_INSTALL_INCLUDEDIR)")

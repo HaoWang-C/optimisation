@@ -1,5 +1,5 @@
 #include <iostream>
-#include "test.h"
+#include "gauss_newton.h"
 
 namespace unconstrained
 {
