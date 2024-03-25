@@ -2,30 +2,33 @@
 
 namespace optimisation {
 
-Eigen::Matrix<double, 2, 1> ExampleProblem::func() const {
-  Eigen::Matrix<double, 2, 1> f;
-  f << (x_ + 1), (2 * x_ * x_ + x_ - 1);
-  return f;
+Eigen::Matrix<double, Eigen::Dynamic, 1>
+LeastSquareProblem::EvaluateVectorFunction() const {
+  return (*func_)(x_);
 }
 
-double ExampleProblem::CostFunc() const {
-  Eigen::Matrix<double, 2, 1> f_matrix = func();
-  return 0.5 * (f_matrix(0) * f_matrix(0) + f_matrix(1) * f_matrix(1));
+double LeastSquareProblem::EvaluateCostFunction() const {
+  Eigen::Matrix<double, Eigen::Dynamic, 1> f_vector = EvaluateVectorFunction();
+  return 0.5 * f_vector.squaredNorm();
 }
 
-Eigen::Matrix<double, 2, 1> ExampleProblem::Jacobian_of_f() const {
-  Eigen::Matrix<double, 2, 1> Jacobian;
-  Jacobian << 1, (2 * 2 * x_ + 1);
-  return Jacobian;
+Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
+LeastSquareProblem::EvaluateJacobian() const {
+  return (*jacobian_)(x_);
 }
 
-bool ExampleProblem::UpdateVariable(const std::vector<double> &delta_x) {
-  if (delta_x.size() != 1) {
-    return false;
+void LeastSquareProblem::UpdateVariable(
+    const Eigen::Matrix<double, Eigen::Dynamic, 1> &h) {
+  // Check if the sizes of x_ and h match
+  if (h.size() != size_of_x_) {
+    // TODO: throw exception
+    std::cout << "The step h has wrong size" << std::endl;
   }
-  x_ += delta_x.at(0);
-  std::cout << "Update variable to: " << x_ << std::endl;
-  return true;
+
+  // Perform element-wise addition
+  for (int i = 0; i < h.size(); ++i) {
+    x_[i] += h(i);
+  }
 }
 
 } // namespace optimisation

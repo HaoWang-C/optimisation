@@ -1,85 +1,48 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 
 #include "eigen3/Eigen/Core"
-// Design a optimisation problem then design a solver. This code design the
-// problem. We need:
-//    1. A cost function F that can be evaluated at x
-//    2. The Jacobian that can be evaluated at x
-//    3. The Hessian that can be evaluated at x
-
-// Design:
-//  1. The problem should be a "class".
-//  2. The problem class should be able to calculate F J H.
-//  3. The problem should also be able to access/update the optimisation
-//  variable
-//  4. The optimisation variable x should be a double value vector
-
-// Note:
-//  1. Only least square problem is considered in this initial work.
-
-// TODO: Alternative way is using functor
-// Define a functor class
-// class MyFunctor {
-// public:
-//     // Overload the function call operator ()
-//     void operator()(int value) const {
-//         std::cout << "Functor called with value: " << value << std::endl;
-//     }
-// };
-
-// // Define a class that takes a functor as an input object
-// class FunctionWrapper {
-// public:
-//     // Constructor taking a functor as argument
-//     FunctionWrapper(const MyFunctor& func) : m_func(func) {}
-
-//     // Method to execute the stored functor with an integer argument
-//     void execute(int value) {
-//         m_func(value);
-//     }
-
-// private:
-//     // Functor member
-//     MyFunctor m_func;
-// };
-
 namespace optimisation {
 
-// Dimension of the function F is m
-// Dimension of optimisation variable X is n
-template <int m, int n> class LeastSquareProblem {
+class VectorFunction {
 public:
-  // f: R(n) ---> R(m)
-  // F: (1/2) * ||f||^2 (CostFunc)
-  virtual Eigen::Matrix<double, m, 1> func() const = 0;
-  virtual double CostFunc() const = 0;
-
-  // Jacobian return a m-by-n matrix
-  virtual Eigen::Matrix<double, m, n> Jacobian_of_f() const = 0;
-
-  virtual bool UpdateVariable(const std::vector<double> &delta_x) = 0;
-
-  virtual ~LeastSquareProblem() {}
+  virtual Eigen::Matrix<double, Eigen::Dynamic, 1>
+  operator()(const double *vars) const = 0;
 };
 
-class ExampleProblem : public LeastSquareProblem<2, 1> {
+class Jacobian {
 public:
-  ExampleProblem(const double x) : x_(x) {}
+  virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
+  operator()(const double *vars) const = 0;
+};
 
-  Eigen::Matrix<double, 2, 1> func() const override;
+// Dimension of the vector valued function f is m
+// Dimension of optimisation variable X is n
+class LeastSquareProblem {
+public:
+  LeastSquareProblem(const std::shared_ptr<VectorFunction> &func,
+                     const std::shared_ptr<Jacobian> &jacobian,
+                     const int size_of_x, double *x)
+      : func_(func), jacobian_(jacobian), size_of_x_(size_of_x), x_(x) {}
 
-  double CostFunc() const override;
+  // f: R(n) ---> R(m)
+  // F: (1/2) * ||f||^2 (CostFunc)
+  Eigen::Matrix<double, Eigen::Dynamic, 1> EvaluateVectorFunction() const;
+  double EvaluateCostFunction() const;
 
-  Eigen::Matrix<double, 2, 1> Jacobian_of_f() const override;
+  // Jacobian return a m-by-n matrix
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
+  EvaluateJacobian() const;
 
-  bool UpdateVariable(const std::vector<double> &delta_x) override;
-
-  double x() const { return x_; }
+  void UpdateVariable(const Eigen::Matrix<double, Eigen::Dynamic, 1> &h);
 
 private:
-  double x_;
+  std::shared_ptr<VectorFunction> func_;
+  std::shared_ptr<Jacobian> jacobian_;
+  int size_of_x_;
+  double *x_;
 };
 
 } // namespace optimisation

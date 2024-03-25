@@ -1,16 +1,20 @@
+#include "example_problem.h"
 #include "gauss_newton.h"
 #include "problem.h"
 
 #include <iostream>
 
 int main() {
-  optimisation::ExampleProblem ex_prob(3);
+  double lambda = 2;
+  double numer_of_iteration = 100;
 
-  std::cout << "f:\n" << ex_prob.func() << std::endl;
-  std::cout << "F:\n" << ex_prob.CostFunc() << std::endl;
-  std::cout << "Jacobian:\n" << ex_prob.Jacobian_of_f() << std::endl;
+  double solution = 10;
+  optimisation::LeastSquareProblem problem(
+      std::make_shared<optimisation::ExampleVectorFunction>(lambda),
+      std::make_shared<optimisation::ExampleJacobian>(lambda), 1, &solution);
 
-  unconstrained::GaussianNewtonSolve(ex_prob);
+  unconstrained::GaussianNewtonSolve(problem, numer_of_iteration);
+  std::cout << "solution: " << solution << std::endl;
 
   return 0;
 }
