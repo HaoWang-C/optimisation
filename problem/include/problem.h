@@ -5,6 +5,7 @@
 
 #include "eigen3/Eigen/Core"
 namespace optimisation {
+void printArray(const double *array, int size);
 
 class VectorFunction {
 public:
@@ -30,13 +31,17 @@ public:
   // f: R(n) ---> R(m)
   // F: (1/2) * ||f||^2 (CostFunc)
   Eigen::Matrix<double, Eigen::Dynamic, 1> EvaluateVectorFunction() const;
-  double EvaluateCostFunction() const;
+  Eigen::Matrix<double, Eigen::Dynamic, 1>
+  EvaluateVectorFunctionAtGivenValue(const double *x) const;
+  double EvaluateCostFunctionAtGivenValue(const double *x) const;
 
   // Jacobian return a m-by-n matrix
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
   EvaluateJacobian() const;
 
   void UpdateVariable(const Eigen::Matrix<double, Eigen::Dynamic, 1> &h);
+
+  const double *GetOptimisationVariables() { return x_; }
 
 private:
   std::shared_ptr<VectorFunction> func_;

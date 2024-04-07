@@ -2,13 +2,31 @@
 
 namespace optimisation {
 
+void printArray(const double *array, int size) {
+  std::cout << "[";
+  for (int i = 0; i < size; ++i) {
+    std::cout << array[i];
+    if (i < size - 1) {
+      std::cout << ", ";
+    }
+  }
+  std::cout << "]";
+}
+
 Eigen::Matrix<double, Eigen::Dynamic, 1>
 LeastSquareProblem::EvaluateVectorFunction() const {
   return (*func_)(x_);
 }
 
-double LeastSquareProblem::EvaluateCostFunction() const {
-  Eigen::Matrix<double, Eigen::Dynamic, 1> f_vector = EvaluateVectorFunction();
+Eigen::Matrix<double, Eigen::Dynamic, 1>
+LeastSquareProblem::EvaluateVectorFunctionAtGivenValue(const double *x) const {
+  return (*func_)(x);
+}
+
+double
+LeastSquareProblem::EvaluateCostFunctionAtGivenValue(const double *x) const {
+  Eigen::Matrix<double, Eigen::Dynamic, 1> f_vector =
+      EvaluateVectorFunctionAtGivenValue(x);
   return 0.5 * f_vector.squaredNorm();
 }
 

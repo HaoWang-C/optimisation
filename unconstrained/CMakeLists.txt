@@ -8,6 +8,7 @@ add_library(unconstrained_optimisation)
 target_sources(unconstrained_optimisation
 PRIVATE
     src/gauss_newton.cc
+    src/levenberg_marquardt.cc
 )
 
 target_link_libraries(unconstrained_optimisation
